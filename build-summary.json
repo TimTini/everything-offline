@@ -1,0 +1,307 @@
+{
+  "selectedApps": [
+    "3d",
+    "accounting",
+    "api-client",
+    "audio-studio",
+    "backgammon",
+    "building-design",
+    "cad",
+    "calendar",
+    "cap-table",
+    "checkers",
+    "chess",
+    "childcare",
+    "circuits",
+    "contacts",
+    "contracts",
+    "crm",
+    "documents",
+    "email",
+    "expense",
+    "field-service",
+    "fleet",
+    "help-desk",
+    "hiring",
+    "inventory",
+    "invoicing",
+    "legal",
+    "music-studio",
+    "notes",
+    "parametric",
+    "pdf",
+    "photo-studio",
+    "pos",
+    "presentation",
+    "projects",
+    "property-management",
+    "records",
+    "shifts",
+    "signatures",
+    "solitaire",
+    "spreadsheet",
+    "sudoku",
+    "survey",
+    "tasks",
+    "teamchat",
+    "time-tracking",
+    "vector-studio",
+    "video-studio",
+    "whiteboard",
+    "wiki"
+  ],
+  "successes": [
+    {
+      "app": "3d",
+      "files": 91,
+      "bytes": 16273514
+    },
+    {
+      "app": "accounting",
+      "files": 36,
+      "bytes": 942362
+    },
+    {
+      "app": "api-client",
+      "files": 26,
+      "bytes": 1381528
+    },
+    {
+      "app": "audio-studio",
+      "files": 29,
+      "bytes": 3038028
+    },
+    {
+      "app": "backgammon",
+      "files": 71,
+      "bytes": 1764533
+    },
+    {
+      "app": "building-design",
+      "files": 13,
+      "bytes": 1558158
+    },
+    {
+      "app": "cad",
+      "files": 11,
+      "bytes": 1458433
+    },
+    {
+      "app": "calendar",
+      "files": 27,
+      "bytes": 5075475
+    },
+    {
+      "app": "cap-table",
+      "files": 108,
+      "bytes": 4858068
+    },
+    {
+      "app": "checkers",
+      "files": 71,
+      "bytes": 1434899
+    },
+    {
+      "app": "chess",
+      "files": 84,
+      "bytes": 1630632
+    },
+    {
+      "app": "childcare",
+      "files": 40,
+      "bytes": 548529
+    },
+    {
+      "app": "circuits",
+      "files": 27,
+      "bytes": 1768772
+    },
+    {
+      "app": "contacts",
+      "files": 29,
+      "bytes": 3075459
+    },
+    {
+      "app": "contracts",
+      "files": 16,
+      "bytes": 2003105
+    },
+    {
+      "app": "crm",
+      "files": 13,
+      "bytes": 918207
+    },
+    {
+      "app": "documents",
+      "files": 716,
+      "bytes": 33335926
+    },
+    {
+      "app": "email",
+      "files": 11,
+      "bytes": 528599
+    },
+    {
+      "app": "expense",
+      "files": 13,
+      "bytes": 688520
+    },
+    {
+      "app": "field-service",
+      "files": 47,
+      "bytes": 510226
+    },
+    {
+      "app": "fleet",
+      "files": 73,
+      "bytes": 687935
+    },
+    {
+      "app": "help-desk",
+      "files": 49,
+      "bytes": 812317
+    },
+    {
+      "app": "hiring",
+      "files": 11,
+      "bytes": 1165151
+    },
+    {
+      "app": "inventory",
+      "files": 70,
+      "bytes": 3224816
+    },
+    {
+      "app": "invoicing",
+      "files": 16,
+      "bytes": 1471554
+    },
+    {
+      "app": "legal",
+      "files": 58,
+      "bytes": 683428
+    },
+    {
+      "app": "music-studio",
+      "files": 21,
+      "bytes": 2394609
+    },
+    {
+      "app": "notes",
+      "files": 12,
+      "bytes": 2381151
+    },
+    {
+      "app": "parametric",
+      "files": 26,
+      "bytes": 24802693
+    },
+    {
+      "app": "pdf",
+      "files": 55,
+      "bytes": 20617106
+    },
+    {
+      "app": "photo-studio",
+      "files": 236,
+      "bytes": 8026400
+    },
+    {
+      "app": "pos",
+      "files": 14,
+      "bytes": 1151564
+    },
+    {
+      "app": "presentation",
+      "files": 31,
+      "bytes": 5097177
+    },
+    {
+      "app": "projects",
+      "files": 13,
+      "bytes": 452591
+    },
+    {
+      "app": "property-management",
+      "files": 74,
+      "bytes": 821163
+    },
+    {
+      "app": "records",
+      "files": 12,
+      "bytes": 938895
+    },
+    {
+      "app": "shifts",
+      "files": 10,
+      "bytes": 1276502
+    },
+    {
+      "app": "signatures",
+      "files": 20,
+      "bytes": 2747598
+    },
+    {
+      "app": "solitaire",
+      "files": 18,
+      "bytes": 520884
+    },
+    {
+      "app": "spreadsheet",
+      "files": 72,
+      "bytes": 11973868
+    },
+    {
+      "app": "sudoku",
+      "files": 68,
+      "bytes": 1449840
+    },
+    {
+      "app": "survey",
+      "files": 35,
+      "bytes": 931917
+    },
+    {
+      "app": "tasks",
+      "files": 11,
+      "bytes": 568388
+    },
+    {
+      "app": "teamchat",
+      "files": 12,
+      "bytes": 1227934
+    },
+    {
+      "app": "time-tracking",
+      "files": 13,
+      "bytes": 922126
+    },
+    {
+      "app": "vector-studio",
+      "files": 127,
+      "bytes": 9530517
+    },
+    {
+      "app": "video-studio",
+      "files": 386,
+      "bytes": 33084282
+    },
+    {
+      "app": "whiteboard",
+      "files": 74,
+      "bytes": 7473726
+    },
+    {
+      "app": "wiki",
+      "files": 13,
+      "bytes": 994607
+    }
+  ],
+  "failures": [],
+  "totals": {
+    "successfulApps": 49,
+    "failedApps": 0,
+    "files": 3109,
+    "bytes": 230223712
+  }
+}

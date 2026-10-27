@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; data: blob:; script-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39;; style-src &#39;self&#39; &#39;unsafe-inline&#39;; img-src &#39;self&#39; data: blob:; font-src &#39;self&#39; data: blob:; media-src &#39;self&#39; data: blob:; connect-src &#39;self&#39;; worker-src &#39;self&#39; blob:; object-src &#39;none&#39;; frame-src &#39;none&#39;; form-action &#39;self&#39;; base-uri &#39;self&#39;">
+  <meta name="referrer" content="no-referrer">
+  <title>Everything Offline</title>
+  <style>
+    :root { color-scheme: light dark; font: 16px/1.5 system-ui, sans-serif; }
+    body { margin: 0; background: #10151c; color: #edf2f7; }
+    main { width: min(100% - 2rem, 68rem); margin: 0 auto; padding: 3rem 0 4rem; }
+    h1 { margin: 0 0 .5rem; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: -.04em; }
+    .intro { max-width: 48rem; color: #c1ccd9; }
+    .warning { margin: 1.5rem 0; padding: 1rem 1.25rem; border: 1px solid #d99e32; border-left-width: 5px; border-radius: .6rem; background: #302613; color: #fff0c2; }
+    .warning p { margin: .3rem 0; }
+    h2 { margin-top: 2.5rem; font-size: 1.2rem; }
+    ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: .8rem; padding: 0; list-style: none; }
+    li { min-width: 0; padding: 1rem; border: 1px solid #354251; border-radius: .65rem; background: #18212c; }
+    li a { display: flex; justify-content: space-between; gap: 1rem; color: #edf2f7; text-decoration: none; }
+    li a:hover, li a:focus-visible { color: #95c8ff; text-decoration: underline; }
+    .status { display: block; margin-top: .4rem; color: #9cabbc; font-size: .88rem; }
+    .arrow { color: #8fbfff; }
+    footer { margin-top: 3rem; color: #aeb9c6; font-size: .9rem; }
+    a { color: #9dccff; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Everything Offline</h1>
+    <p class="intro">A collection of browser apps built from the Everything Project sources for this static GitHub Pages demo.</p>
+    <aside class="warning" aria-label="Offline demo limitations">
+      <strong>Cloud services are disabled.</strong>
+      <p>Files and settings in an app session are in memory and are lost when you reload or close the tab. Export anything you need to keep.</p>
+      <p>GitHub Pages loads these app files from GitHub. This page has no launcher proxy and does not provide OS-level network isolation or a zero-outbound guarantee. Use the local offline launcher for its dedicated browser and deny-all proxy.</p>
+    </aside>
+    <h2>Applications</h2>
+    <ul>
+<li><a href="apps/3d/"><strong>3d</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/accounting/"><strong>Accounting</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/api-client/"><strong>Api Client</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/audio-studio/"><strong>Audio Studio</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/backgammon/"><strong>Backgammon</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/building-design/"><strong>Building Design</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/cad/"><strong>Cad</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/calendar/"><strong>Calendar</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/cap-table/"><strong>Cap Table</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/checkers/"><strong>Checkers</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/chess/"><strong>Chess</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/childcare/"><strong>Childcare</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/circuits/"><strong>Circuits</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/contacts/"><strong>Contacts</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/contracts/"><strong>Contracts</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/crm/"><strong>Crm</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/documents/"><strong>Documents</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/email/"><strong>Email</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Email is disabled in offline mode</span></li>
+<li><a href="apps/expense/"><strong>Expense</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/field-service/"><strong>Field Service</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/fleet/"><strong>Fleet</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/help-desk/"><strong>Help Desk</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/hiring/"><strong>Hiring</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/inventory/"><strong>Inventory</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/invoicing/"><strong>Invoicing</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/legal/"><strong>Legal</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/music-studio/"><strong>Music Studio</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/notes/"><strong>Notes</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/parametric/"><strong>Parametric</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/pdf/"><strong>Pdf</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/photo-studio/"><strong>Photo Studio</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/pos/"><strong>Pos</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/presentation/"><strong>Presentation</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/projects/"><strong>Projects</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/property-management/"><strong>Property Management</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/records/"><strong>Records</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/shifts/"><strong>Shifts</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/signatures/"><strong>Signatures</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/solitaire/"><strong>Solitaire</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/spreadsheet/"><strong>Spreadsheet</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/sudoku/"><strong>Sudoku</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/survey/"><strong>Survey</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/tasks/"><strong>Tasks</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/teamchat/"><strong>Teamchat</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/time-tracking/"><strong>Time Tracking</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/vector-studio/"><strong>Vector Studio</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/video-studio/"><strong>Video Studio</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/whiteboard/"><strong>Whiteboard</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+<li><a href="apps/wiki/"><strong>Wiki</strong><span class="arrow" aria-hidden="true">→</span></a><span class="status">Runs in this browser tab</span></li>
+    </ul>
+    <footer>Source: <a href="https://github.com/TimTini/everything-offline" rel="noreferrer">everything-offline on GitHub</a>. Pages delivery requires an Internet connection to load the site.</footer>
+  </main>
+</body>
+</html>

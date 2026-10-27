@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; form-action 'self'; base-uri 'self'"><script>(function installOfflineGuard(options = {}) {
+  const origin = options.origin || location.origin;
+  const baseUrl = new URL(options.baseUrl || (typeof document !== 'undefined' ? document.baseURI : new URL('./', location.href)), origin);
+  const sharedScripts = new Map();
+  const resolve = (value) => {
+    const raw = typeof value === 'string' || value instanceof URL ? value : value?.url;
+    if (raw == null) throw new TypeError('A URL is required');
+    let url = new URL(raw, baseUrl);
+    if (url.origin === origin && baseUrl.pathname !== '/' && !url.pathname.startsWith(baseUrl.pathname)
+      && /\/[^/]+\.[a-z0-9]+$/i.test(url.pathname)) {
+      url = new URL(`${url.pathname.slice(1)}${url.search}${url.hash}`, baseUrl);
+    }
+    return url;
+  };
+  const allowed = (value, websocket = false) => {
+    let url;
+    try { url = resolve(value); } catch { return false; }
+    if (url.protocol === 'data:' || url.protocol === 'blob:') return true;
+    if (!websocket) return url.origin === origin;
+    return url.host === location.host && (url.protocol === 'ws:' || url.protocol === 'wss:');
+  };
+  const reject = (value) => { throw new TypeError(`Blocked by offline runtime: ${value}`); };
+  const wrap = (Original, check) => new Proxy(Original, {
+    construct(target, args, receiver) {
+      if (!check(args[0])) reject(args[0]);
+      return Reflect.construct(target, args, receiver);
+    },
+  });
+
+  const originalFetch = globalThis.fetch?.bind(globalThis);
+  if (originalFetch) globalThis.fetch = (input, init) => {
+    let url;
+    try { url = resolve(input); } catch { return Promise.reject(new TypeError(`Blocked by offline runtime: ${input}`)); }
+    if (!allowed(url)) return Promise.reject(new TypeError(`Blocked by offline runtime: ${url.href}`));
+    const request = typeof Request !== 'undefined' && input instanceof Request
+      ? url.href === input.url ? input : new Request(url.href, input)
+      : url.href;
+    return originalFetch(request, init);
+  };
+  if (globalThis.XMLHttpRequest?.prototype) {
+    const xhrOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function (method, value, ...args) {
+      const url = resolve(value);
+      if (!allowed(url)) reject(url.href);
+      return xhrOpen.call(this, method, url.href, ...args);
+    };
+  }
+  if (globalThis.WebSocket) globalThis.WebSocket = wrap(WebSocket, url => allowed(resolve(url), true));
+  if (globalThis.EventSource) globalThis.EventSource = wrap(EventSource, url => allowed(resolve(url)));
+  if (globalThis.Worker || globalThis.SharedWorker) {
+    const workerOptions = JSON.stringify({ origin, baseUrl: baseUrl.href });
+    for (const name of ['Worker', 'SharedWorker']) {
+      const Original = globalThis[name];
+      if (!Original) continue;
+      globalThis[name] = new Proxy(Original, {
+        construct(target, args, receiver) {
+          let source;
+          try { source = resolve(args[0]); } catch { return reject(args[0]); }
+          if (!allowed(source)) return reject(source.href);
+          const shared = name === 'SharedWorker';
+          const type = args[1]?.type === 'module' ? 'module' : 'classic';
+          const key = `${type}:${source.href}`;
+          let bootstrapUrl = shared ? sharedScripts.get(key) : null;
+          if (!bootstrapUrl) {
+            const guard = `(${installOfflineGuard.toString()})(${workerOptions});`;
+            const bootstrap = type === 'module'
+              ? `URL.revokeObjectURL(import.meta.url);${guard}await import(${JSON.stringify(source.href)});`
+              : `URL.revokeObjectURL(location.href);${guard}importScripts(${JSON.stringify(source.href)});`;
+            bootstrapUrl = URL.createObjectURL(new Blob([bootstrap], { type: 'text/javascript' }));
+            if (shared) sharedScripts.set(key, bootstrapUrl);
+          }
+          const options = typeof args[1] === 'object' && args[1] !== null ? { ...args[1] } : args[1];
+          if (typeof options === 'object') options.type = type;
+          return Reflect.construct(target, [bootstrapUrl, options], receiver);
+        },
+      });
+    }
+  }
+  if (navigator.sendBeacon) {
+    const sendBeacon = navigator.sendBeacon.bind(navigator);
+    navigator.sendBeacon = (url, data) => allowed(resolve(url)) ? sendBeacon(resolve(url).href, data) : false;
+  }
+  if (globalThis.window) {
+    const open = window.open.bind(window);
+    window.open = (url, ...args) => !url || allowed(resolve(url)) ? open(url, ...args) : null;
+  }
+  for (const name of ['RTCPeerConnection', 'webkitRTCPeerConnection', 'WebTransport']) {
+    if (globalThis[name]) globalThis[name] = new Proxy(globalThis[name], { construct() { reject(name); } });
+  }
+  if (typeof navigator !== 'undefined' && navigator.serviceWorker) {
+    navigator.serviceWorker.register = () => Promise.reject(new TypeError('Service workers are disabled by offline runtime'));
+  }
+  if (typeof document !== 'undefined') {
+    document.addEventListener('click', (event) => {
+      const link = event.target?.closest?.('a[href]');
+      if (link && !allowed(resolve(link.href))) { event.preventDefault(); event.stopImmediatePropagation(); }
+    }, true);
+    document.addEventListener('submit', (event) => {
+      if (!allowed(resolve(event.target.action))) { event.preventDefault(); event.stopImmediatePropagation(); }
+    }, true);
+  }
+})();</script><script>(function installOfflineSDK(appName) {
+  const name = String(appName || 'app').replace(/[^a-zA-Z0-9_-]/g, '-');
+  const user = { username: 'offline', uuid: 'offline-user' };
+  const files = new Map();
+  const values = new Map();
+  const normalize = (input) => {
+    if (typeof input !== 'string' || !input.trim() || input.includes('\\') || input.startsWith('/')) throw new Error('Invalid offline path');
+    const raw = input.replace(/\/+$/g, '');
+    const parts = raw.split('/');
+    if (parts.some(part => !part || part === '.' || part === '..')) throw new Error('Invalid offline path');
+    return parts.join('/');
+  };
+  const parent = path => path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '';
+  const base = path => path.slice(path.lastIndexOf('/') + 1);
+  const makeDir = path => {
+    let current = '';
+    for (const part of path.split('/')) {
+      current = current ? `${current}/${part}` : part;
+      if (files.has(current) && !files.get(current).dir) throw new Error(`Not a directory: ${current}`);
+      if (!files.has(current)) files.set(current, { dir: true, blob: null, modified: Math.floor(Date.now() / 1000) });
+    }
+  };
+  const entry = path => {
+    const item = files.get(path);
+    if (!item) throw new Error(`File not found: ${path}`);
+    return item;
+  };
+  const metadata = (path, item) => ({
+    name: base(path), path, uid: `offline:${path}`, size: item.dir ? 0 : item.blob.size,
+    is_dir: item.dir, modified: item.modified, owner: user,
+  });
+  const fs = {
+    async read(input) {
+      const path = normalize(input), item = entry(path);
+      if (item.dir) throw new Error(`Cannot read directory: ${path}`);
+      return item.blob.slice(0, item.blob.size, item.blob.type);
+    },
+    async write(input, data, options = {}) {
+      const path = normalize(input), parentPath = parent(path), current = files.get(path);
+      if (current?.dir) throw new Error(`Path is a directory: ${path}`);
+      if (current && !options.overwrite) throw new Error(`File already exists: ${path}`);
+      if (parentPath && !files.has(parentPath)) {
+        if (!options.createMissingParents) throw new Error(`Parent directory not found: ${parentPath}`);
+        makeDir(parentPath);
+      }
+      if (parentPath && files.get(parentPath)?.dir !== true) throw new Error(`Parent is not a directory: ${parentPath}`);
+      const blob = data instanceof Blob ? data.slice(0, data.size, data.type) : new Blob([data]);
+      files.set(path, { dir: false, blob, modified: Math.floor(Date.now() / 1000) });
+      return metadata(path, files.get(path));
+    },
+    async readdir(input = '') {
+      const path = input ? normalize(input) : '';
+      if (path && !entry(path).dir) throw new Error(`Not a directory: ${path}`);
+      return [...files].filter(([key]) => parent(key) === path).map(([key, item]) => metadata(key, item));
+    },
+    async stat(input) {
+      const path = typeof input === 'object' && input?.uid
+        ? [...files.keys()].find(key => `offline:${key}` === input.uid)
+        : normalize(input);
+      if (!path) throw new Error('File not found');
+      return metadata(path, entry(path));
+    },
+    async mkdir(input, options = {}) {
+      const path = normalize(input);
+      if (!options.recursive && parent(path) && !files.get(parent(path))?.dir) throw new Error(`Parent directory not found: ${parent(path)}`);
+      makeDir(path);
+      return metadata(path, entry(path));
+    },
+    async delete(input, options = {}) {
+      const path = normalize(input), item = entry(path);
+      const children = [...files.keys()].filter(key => key.startsWith(`${path}/`));
+      if (item.dir && children.length && !options.recursive) throw new Error(`Directory is not empty: ${path}`);
+      for (const key of children) files.delete(key);
+      files.delete(path);
+    },
+    async rename(from, to) {
+      const source = normalize(from), item = entry(source);
+      const target = normalize(String(to).includes('/') ? to : `${parent(source) ? `${parent(source)}/` : ''}${to}`);
+      if (target.startsWith(`${source}/`)) throw new Error('Cannot move a directory into itself');
+      if (files.has(target)) throw new Error(`Destination already exists: ${target}`);
+      const targetParent = parent(target);
+      if (targetParent && !files.get(targetParent)?.dir) throw new Error(`Parent directory not found: ${targetParent}`);
+      const moved = [...files].filter(([key]) => key === source || key.startsWith(`${source}/`));
+      for (const [key] of moved) files.delete(key);
+      for (const [key, value] of moved) files.set(key === source ? target : `${target}${key.slice(source.length)}`, value);
+      return metadata(target, item);
+    },
+    async getReadURL(input) {
+      const file = await fs.read(input);
+      return URL.createObjectURL(file);
+    },
+  };
+  const kv = {
+    async get(key, options = {}) {
+      const value = values.get(String(key));
+      if (value === undefined) return null;
+      const copy = structuredClone(value);
+      return options.returnValues ? { key: String(key), value: copy } : copy;
+    },
+    async set(key, value) { values.set(String(key), structuredClone(value)); return true; },
+    async add(key, items) {
+      const name = String(key);
+      if (!Array.isArray(items)) throw new TypeError('KV add expects an array');
+      const current = values.get(name);
+      if (values.has(name) && !Array.isArray(current)) throw new TypeError('KV add requires the existing value to be an array');
+      const next = [...(current || []), ...structuredClone(items)];
+      values.set(name, next);
+      return structuredClone(next);
+    },
+    async del(key) { return values.delete(String(key)); },
+    async list(input = '*', options = {}) {
+      const pattern = typeof input === 'object' ? input.pattern ?? '*' : input;
+      const returnValues = typeof input === 'object' ? Boolean(input.returnValues) : typeof options === 'boolean' ? options : Boolean(options?.returnValues);
+      const re = new RegExp(`^${String(pattern).split('*').map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*')}$`);
+      return [...values].filter(([key]) => re.test(key)).map(([key, value]) => returnValues ? { key, value: structuredClone(value) } : key);
+    },
+  };
+  const auth = {
+    isSignedIn() { return signedIn; },
+    async getUser() { return signedIn ? { ...user } : null; },
+    async whoami() { return signedIn ? { ...user } : null; },
+    async getProfilePicture() { return null; },
+    async signIn() { signedIn = true; return { ...user }; },
+    async signOut() { signedIn = false; },
+  };
+  let signedIn = true;
+  const ui = {
+    setWindowTitle(title) { if (typeof document !== 'undefined') document.title = String(title); },
+    onLaunchedWithItems() {},
+  };
+  window.puter = { env: 'web', appID: `offline-${name}`, auth, fs, kv, ui };
+  const showNotice = () => {
+    if (!document.body || document.getElementById('offline-session-notice')) return;
+    const notice = document.createElement('div');
+    notice.id = 'offline-session-notice';
+    notice.textContent = 'Offline session: files and settings are lost when you reload or close this tab. Export files to keep them.';
+    Object.assign(notice.style, {
+      position: 'fixed', bottom: '8px', left: '8px', zIndex: '2147483647',
+      padding: '8px 12px', background: '#fff4ce', color: '#222', border: '1px solid #806000',
+      borderRadius: '4px', font: '13px/1.4 sans-serif',
+    });
+    document.body.appendChild(notice);
+  };
+  if (typeof document !== 'undefined') {
+    if (document.body) showNotice();
+    else document.addEventListener('DOMContentLoaded', showNotice, { once: true });
+  }
+})("field-service");</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Field service management: clients, requests, quotes, jobs, scheduling, invoices, and payments." />
+    <title>Field Service</title>
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171b21" media="(prefers-color-scheme: dark)" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="icon" href="./favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <script>
+      // Apply a forced theme before first paint to avoid a flash.
+      try {
+        var t = localStorage.getItem('fieldservice.theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
+    
+    <script type="module" crossorigin src="./assets/index-cAFNLOlz.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-D5J1LNVy.css">
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>Field Service needs JavaScript to run.</noscript>
+  </body>
+</html>

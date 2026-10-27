@@ -1,0 +1,2 @@
+var e=5e6,t=`This editor currently supports up to 5,000,000 characters.`,n=e=>String(e??``).replace(/\r\n?|[\v\f]/g,`
+`).replace(/[\u0000-\u0008\u000e-\u001f\ufffe\uffff]/g,``);export{e as n,n as r,t};

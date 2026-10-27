@@ -1,0 +1,1 @@
+(function(){self.onmessage=async({data:{id:e,source:t}})=>{if(typeof FontFace>`u`){self.postMessage({id:e,found:null});return}let n=!1;try{await new FontFace(`Documents local font probe`,t).load(),n=!0}catch{}self.postMessage({id:e,found:n})},self.postMessage({ready:!0})})();
