@@ -46,7 +46,7 @@ test('browser guard blocks cross-origin network APIs while allowing same-origin 
     document: { addEventListener() {}, createElement() { return {}; } },
   };
   vm.runInNewContext(`(${installOfflineGuard.toString()})()`, context);
-  assert.equal((await context.fetch('/api/local')).url, '/api/local');
+  assert.equal((await context.fetch('/api/local')).url, 'http://127.0.0.1:4173/api/local');
   assert.equal((await context.fetch('blob:http://127.0.0.1:4173/id')).url, 'blob:http://127.0.0.1:4173/id');
   await assert.rejects(context.fetch('https://outside.invalid/data'), /offline/);
   const xhr = new context.XMLHttpRequest();
@@ -62,6 +62,53 @@ test('browser guard blocks cross-origin network APIs while allowing same-origin 
   assert.throws(() => new context.WebTransport('https://outside.invalid'), /offline/);
   await assert.rejects(context.navigator.serviceWorker.register('/worker.js'), /offline/);
   assert.deepEqual(blocked, []);
+});
+
+test('guard maps app root assets to the hosted base and wraps module/classic workers', async () => {
+  const blobs = new Map();
+  class TestURL extends URL {
+    static createObjectURL(blob) { const key = `blob:https://pages.test/${blobs.size}`; blobs.set(key, blob); return key; }
+    static revokeObjectURL() {}
+  }
+  class FakeWorker { constructor(url, options) { this.url = url; this.options = options; } }
+  const fetched = [];
+  const context = {
+    URL: TestURL, Blob, location: new URL('https://pages.test/everything-offline/apps/photo-studio/'),
+    fetch: async url => (fetched.push(String(url)), { url: String(url) }), XMLHttpRequest: class { open() {} },
+    Worker: FakeWorker, SharedWorker: FakeWorker, navigator: {}, window: { open() {} },
+    document: { baseURI: 'https://pages.test/everything-offline/apps/photo-studio/', addEventListener() {} },
+  };
+  vm.runInNewContext(`(${installOfflineGuard.toString()})()`, context);
+  await context.fetch('/photo-engine.wasm');
+  assert.equal(fetched[0], 'https://pages.test/everything-offline/apps/photo-studio/photo-engine.wasm');
+  await assert.rejects(context.fetch('https://outside.invalid/photo-engine.wasm'), /offline/);
+
+  const moduleWorker = new context.Worker(new TestURL('/assets/worker.js', context.location), { type: 'module', name: 'photo' });
+  assert.equal(moduleWorker instanceof FakeWorker, true);
+  const moduleBootstrap = await blobs.get(moduleWorker.url).text();
+  assert.match(moduleBootstrap, /installOfflineGuard/);
+  assert.match(moduleBootstrap, /everything-offline\/apps\/photo-studio\/assets\/worker\.js/);
+  assert.match(moduleBootstrap, /await import\(/);
+  assert.equal(moduleWorker.options.name, 'photo');
+
+  const classicWorker = new context.Worker('/classic-worker.js');
+  const classicBootstrap = await blobs.get(classicWorker.url).text();
+  assert.match(classicBootstrap, /importScripts\(/);
+});
+
+test('serialized guard runs in workers without document/window and retains the app base', async () => {
+  const fetched = [];
+  const workerContext = {
+    URL, location: new URL('blob:https://pages.test/worker'),
+    fetch: async url => (fetched.push(String(url)), { url: String(url) }),
+    XMLHttpRequest: class { open() {} }, navigator: {},
+  };
+  vm.runInNewContext(`(${installOfflineGuard.toString()})(${JSON.stringify({
+    origin: 'https://pages.test', baseUrl: 'https://pages.test/everything-offline/apps/photo-studio/',
+  })})`, workerContext);
+  await workerContext.fetch('/photo-engine.wasm');
+  assert.equal(fetched[0], 'https://pages.test/everything-offline/apps/photo-studio/photo-engine.wasm');
+  await assert.rejects(workerContext.fetch('https://outside.invalid/worker-data'), /offline/);
 });
 
 test('launcher parses supported modes and resolves only real non-Meetings app entries', async () => {
