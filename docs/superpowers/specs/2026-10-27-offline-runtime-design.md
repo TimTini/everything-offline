@@ -1,0 +1,11 @@
+# Offline-only runtime — approved scope, 2026-10-27
+
+User direction: fresh upstream clone; disable cloud and outbound Internet; minimize app changes; local persistence optional; Meetings excluded. User explicitly authorized starting implementation after scope discussion. No further design approval required.
+
+Use an additive shared Node/Vite launcher, leaving app source and upstream Vite configs unchanged. A shared plugin removes remote script/resource hints, prepends a local browser guard and session-only SDK substitute, and serves restrictive CSP headers in dev and preview. Build output carries an equivalent meta policy and local script. No cloud SDK or telemetry executes. Block fetch/XHR/WebSocket/EventSource/beacon, remote resources/forms/popups, WebRTC/WebTransport, and service-worker registration. Keep same-origin HTTP and dev WebSocket plus blob/data local assets working. Use CSP on worker script responses too. For the supported Windows launcher, open a separate Edge/Chromium profile with a local deny-all proxy and restrictive networking flags; no global browser/firewall settings. Never contact Internet as a verification target; local second-origin canaries prove suppression.
+
+Session SDK satisfies app auth/fs/kv bootstrap only, with honest temporary-storage notice. No IndexedDB/server disk layer or local/cloud sync reimplementation. Existing native import/export and app-managed local storage stay. Unsupported cloud capabilities remain absent. No app may be declared fully working from bootstrap smoke alone. Meetings CLI entry rejected; assets missing entrypoint reported.
+
+Deliver commands: node dev/offline.mjs <app> [--port N] [--no-browser], --build and --preview; node --test dev/tests/*.test.mjs; browser canary smoke using installed browser/test tooling. Install dependencies using each app lockfile, never execute real cloud operations. Setup/build downloading npm dependencies is distinct from offline application runtime and documented.
+
+Risks: browser-level/OS-wide absolute zero packet guarantee needs OS isolation; runtime controls target app egress and dedicated browser. CSP/guard are defense in depth, not a hostile-code security sandbox. Report tested surfaces and remaining untested apps. Do not promise all 49 app workflows.

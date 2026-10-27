@@ -17,6 +17,9 @@ The Everything Project is an effort to rebuild and open-source the world’s sof
 
 Requires Node.js 22.12 or newer.
 
+For this checkout's no-cloud runtime, use the shared launcher described in
+[OFFLINE.md](OFFLINE.md). The upstream commands below retain their normal behavior.
+
 ```sh
 git clone https://github.com/HeyPuter/everything.git
 cd everything/src/[app-name]
